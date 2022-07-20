@@ -36,14 +36,14 @@ def start_streaming():
     print("Is Streaming :",lines.isStreaming)
 
     lines.writeStream.format("console").option("truncate",False).start()
-    """ (lines
+    (lines
     .writeStream
     .format("csv")
     .option("checkpointLocation", "checkpoint/")
     .option("path", "output_dir/")
     .option("truncate",False)
     .outputMode("append")
-    .start()) """
+    .start())
 
     spark.streams.awaitAnyTermination()
     spark.close()
@@ -71,9 +71,9 @@ def update_load():
             except BaseException as ex:
                 pass
             
-""" @app.before_first_request
+@app.before_first_request
 def before_first_request():
-    threading.Thread(target=update_load).start() """
+    threading.Thread(target=update_load).start()
     
 @app.route('/')
 def index():
