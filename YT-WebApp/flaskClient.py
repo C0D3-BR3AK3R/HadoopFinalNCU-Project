@@ -18,6 +18,8 @@ def start_streaming():
     os.environ['PYSPARK_PYTHON'] = sys.executable
     os.environ['PYSPARK_DRIVER_PYTHON'] = sys.executable
     
+    print("Spark Client Starte...")
+    
     spark = SparkSession.builder.appName('YT Comment Streamer').getOrCreate()
     HOST = 'localhost'
     PORT = 9999
@@ -33,20 +35,21 @@ def start_streaming():
     
     print("Is Streaming :",lines.isStreaming)
 
-    # lines.writeStream.format("console").option("truncate",False).start()
-    (lines
+    lines.writeStream.format("console").option("truncate",False).start()
+    """ (lines
     .writeStream
     .format("csv")
     .option("checkpointLocation", "checkpoint/")
     .option("path", "output_dir/")
     .option("truncate",False)
     .outputMode("append")
-    .start())
+    .start()) """
 
     spark.streams.awaitAnyTermination()
     spark.close()
 
 def update_load():
+    print("Loading Data...")
     with app.app_context():
         while True:
             try:
@@ -68,13 +71,19 @@ def update_load():
             except BaseException as ex:
                 pass
             
-@app.before_first_request
+""" @app.before_first_request
 def before_first_request():
-    threading.Thread(target=update_load).start()
-
+    threading.Thread(target=update_load).start() """
+    
 @app.route('/')
 def index():
-    threading.Thread(target=start_streaming).start()
+    return render_template('index.html')
+
+@app.route('/', methods=['POST', 'GET'])
+def my_form_post():
+    print("Server Started...")
+    # threading.Thread(target=start_streaming).start()
+    start_streaming()
     return render_template('index.html')
 
 if __name__ == '__main__':
