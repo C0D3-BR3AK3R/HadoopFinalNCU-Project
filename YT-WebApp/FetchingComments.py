@@ -2,6 +2,10 @@ import socket
 from googleapiclient.discovery import build
 from pyspark.ml.classification import NaiveBayes
 from pyspark.ml.classification import NaiveBayesModel
+from pyspark.sql import SparkSession
+
+from DataPrep import data_prepper
+
 
 API_key = 'AIzaSyBlQUfsYPB9PqrlTUk-9HlEZOUiRg53LqQ'
 video_ID = "5-eFLcCDNo8"
@@ -9,6 +13,9 @@ video_ID = "5-eFLcCDNo8"
 class FetchComments():
     
     def __init__(self, api_key, vid_id):
+        
+        spark = SparkSession.builder.master('local[*]').appName("ml_example").getOrCreate()
+        sc = spark.sparkContext
         
         spamModel = NaiveBayesModel.load('model/nbSpamFilter.model')
 
@@ -29,8 +36,10 @@ class FetchComments():
             
             try:
                 comment_text = comment_info['textDisplay'].encode('utf-8')
+                print('-'*75)
                 print("Comment Text:" ,comment_text)
-                clientSocket.send((comment_text+'\n').encode())
+                print("Spam / Ham:", spamModel.predict(data_prepper.clean_data(comment_text)))
+                clientSocket.send((comment_text+'\n').encode('utf-8'))
             except BaseException as ex:
                 print('Issue in fetching comment.',ex)
             
@@ -57,4 +66,3 @@ obj = FetchComments(api_key=API_key, vid_id=video_ID)
 
 
 
-    

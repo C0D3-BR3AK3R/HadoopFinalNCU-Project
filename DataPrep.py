@@ -56,6 +56,7 @@ class data_prepper():
         mo = text.lower()
         mo = re.sub(r'https?:\/\/\S+', '', mo)               # Removing all links
         mo = re.sub(r"/", ' ', mo)
+        mo = re.sub(r"'", ' ', mo)
         mo = re.sub(r'@[A-Za-z0-9]+', '', mo)                # Removing all @mentions
         mo = re.sub(r'#', '', mo)                           
         mo = re.sub(r"([^0-9A-Za-z \t])", "", mo)
