@@ -1,5 +1,7 @@
 import socket
 from googleapiclient.discovery import build
+from pyspark.ml.classification import NaiveBayes
+from pyspark.ml.classification import NaiveBayesModel
 
 API_key = 'AIzaSyBlQUfsYPB9PqrlTUk-9HlEZOUiRg53LqQ'
 video_ID = "5-eFLcCDNo8"
@@ -7,6 +9,8 @@ video_ID = "5-eFLcCDNo8"
 class FetchComments():
     
     def __init__(self, api_key, vid_id):
+        
+        spamModel = NaiveBayesModel.load('model/nbSpamFilter.model')
 
         resource = build('youtube', 'v3', developerKey=api_key)
 

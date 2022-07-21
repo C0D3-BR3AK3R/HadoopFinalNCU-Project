@@ -35,7 +35,8 @@ def start_streaming():
     
     print("Is Streaming :",lines.isStreaming)
 
-    lines.writeStream.format("console").option("truncate",False).start()
+    lines.writeStream.format("console").option("truncate",False).start()            # Most important line for streaming the comments
+    
     (lines
     .writeStream
     .format("csv")
