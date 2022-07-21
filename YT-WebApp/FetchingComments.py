@@ -25,7 +25,7 @@ class FetchComments():
             
             try:
                 comment_text = comment_info['textDisplay'].encode('utf-8')
-                print("Coment Text:" ,comment_text)
+                print("Comment Text:" ,comment_text)
                 clientSocket.send((comment_text+'\n').encode())
             except BaseException as ex:
                 print('Issue in fetching comment.',ex)
