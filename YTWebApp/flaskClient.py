@@ -1,9 +1,13 @@
 import os, sys
-from tracemalloc import start
+
 from pyspark.sql import SparkSession
+from pyspark import SparkContext
+from pyspark.streaming import StreamingContext
+
 import threading
 import pandas as pd
 from datetime import datetime as dt
+
 import glob
 import time
 from flask import Flask
@@ -21,7 +25,8 @@ def start_streaming():
     print("Spark Client Starte...")
     
     spark = SparkSession.builder.appName('YT Comment Streamer').getOrCreate()
-    HOST = 'localhost'
+    
+    HOST = '127.0.0.1'
     PORT = 9999
     
     # Reading data from network
@@ -40,11 +45,16 @@ def start_streaming():
     (lines
     .writeStream
     .format("csv")
+    .option('format', 'append')
     .option("checkpointLocation", "checkpoint/")
     .option("path", "output_dir/")
     .option("truncate",False)
-    .outputMode("append")
+    .outputMode('append')
     .start())
+    
+    allfiles =  spark.read.option("header","false").csv("output_dir/part-*.csv")
+    allfiles.coalesce(1).write.format("csv").option("header", "false").save("/output_dir/single_csv_file/")
+    
 
     spark.streams.awaitAnyTermination()
     spark.close()
@@ -83,7 +93,7 @@ def index():
 @app.route('/', methods=['POST', 'GET'])
 def my_form_post():
     print("Server Started...")
-    # threading.Thread(target=start_streaming).start()
+    threading.Thread(target=start_streaming).start()
     start_streaming()
     return render_template('index.html')
 

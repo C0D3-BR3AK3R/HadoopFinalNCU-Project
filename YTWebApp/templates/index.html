@@ -1,18 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    
-    <h1>Tweets...</h1>
-    <form action="/" method="POST">
-        <button href="/" class="button">START STREAMING</button>
-    </form>
-    
+{% extends 'base.html' %}
 
-</body>
-</html>
+{% block head %}
+<title>Recommendations Table</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+{% endblock %}
+
+{% block body %}
+    
+<div class="main-block">
+    <form action="/" method="POST">
+        <h3>Enter YouTube Link</h3>
+        <br><br>
+        <div class="info">
+            <input class="fname" type="text" name="URL" placeholder="Skill 1">
+        </div>
+        <button href="/" class="button">Submit</button>
+    </form>
+</div>
+{% endblock %}

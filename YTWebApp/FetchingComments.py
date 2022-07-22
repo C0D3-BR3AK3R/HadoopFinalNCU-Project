@@ -3,12 +3,14 @@ from googleapiclient.discovery import build
 from pyspark.ml.classification import NaiveBayes
 from pyspark.ml.classification import NaiveBayesModel
 from pyspark.sql import SparkSession
+from pyspark import SparkContext
+from pyspark.streaming import StreamingContext
 
 import DataPrep
 
 
 API_key = 'AIzaSyBlQUfsYPB9PqrlTUk-9HlEZOUiRg53LqQ'
-video_ID = "5-eFLcCDNo8"
+video_ID = "JGwWNGJdvx8"
 
 class FetchComments():
     
@@ -16,8 +18,7 @@ class FetchComments():
         
         dp = DataPrep.data_prepper()
         
-        spark = SparkSession.builder.master('local[*]').appName("ml_example").getOrCreate()
-        sc = spark.sparkContext
+        spark = SparkSession.builder.master('local[*]').appName("YT Comment Streamer").getOrCreate()
         
         spamModel = NaiveBayesModel.load('model/nbSpamFilter.model')
 
@@ -38,10 +39,11 @@ class FetchComments():
             
             try:
                 comment_text = comment_info['textDisplay'].encode('utf-8').decode('utf-8', 'ignore')
+                pred = spamModel.predict(dp.clean_data(comment_text))
                 print('-'*75)
                 print("Comment Text:" ,comment_text)
-                print("Spam / Ham:", spamModel.predict(dp.clean_data(comment_text)))
-                clientSocket.send((comment_text+'\n').encode('utf-8'))
+                print("Spam / Ham:", pred)
+                clientSocket.send(('Comment Text: '+comment_text+'\n' + 'Spam / Ham:' + pred).encode('utf-8'))
             except BaseException as ex:
                 print('Issue in fetching comment.',ex)
             
