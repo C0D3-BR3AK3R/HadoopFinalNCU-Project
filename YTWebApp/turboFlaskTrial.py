@@ -1,4 +1,7 @@
 from flask import Flask, render_template, url_for, request
+from turbo_flask import Turbo
+import threading
+import time
 
 from googleapiclient.discovery import build
 from pyspark.ml.classification import NaiveBayesModel
@@ -45,8 +48,16 @@ def fetch_comments(vid_id):
         except BaseException as ex:
             print('Issue in fetching comment.',ex)
             
-
+""" def update_load():
+    
+    with app.app_context():
+        while True:
+            time.sleep(5)
+            turbo.push(turbo.replace(render_template('index.html'), 'load'))
+ """
 app = Flask(__name__)
+
+# turbo = Turbo(app)
 
 @app.route('/')
 def index():
@@ -60,6 +71,10 @@ def my_form_post():
     
     return html_table(vid_id)
 
+""" @app.before_request
+def beforet_request():
+    threading.Thread(target=update_load).start() """
+
 @app.route('/', methods=['POST', 'GET'])
 def html_table(video):
     
@@ -70,4 +85,3 @@ def html_table(video):
 
 if __name__ == '__main__':
     app.run(debug=True)
-    
