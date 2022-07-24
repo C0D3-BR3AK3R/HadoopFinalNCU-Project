@@ -55,6 +55,7 @@ def fetch_comments(vid_id):
             time.sleep(5)
             turbo.push(turbo.replace(render_template('index.html'), 'load'))
  """
+
 app = Flask(__name__)
 
 # turbo = Turbo(app)
